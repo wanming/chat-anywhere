@@ -26,7 +26,7 @@ module.exports = function (app, io) {
 
       console.log('room', room, 'got message', msg.msg);
 
-      io.to(room).emit('chat-message', { user: { name: userName }, msg: { content: msg.msg } });
+      io.to(room).emit('chat-message', { user: { name: userName }, msg: { date: +new Date(), content: msg.msg } });
 
     });
 

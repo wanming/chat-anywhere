@@ -1,23 +1,31 @@
 * { margin: 0 auto; padding: 0; }
 
+body { background: #FFF; }
+
 #msg-input-form {
-  margin-top: 30px;
+  margin-top: 10px;
 }
 
 .msg-item {
-  margin-top: 20px;
+  margin-top: 5px;
 }
 
 .msg-item .user-name {
-  display: inline-block;
-  width: 60px;
-  text-align: right;
+  font-size: 12px;
   font-weight: bold;
 }
 
 .msg-item .msg-content {
-  display: inline-block;
+  font-size: 12px;
   padding-left: 0.5em;
-  width: 200px;
 }
 
+.msg-item .msg-date {
+  color: #AAA;
+  font-size: 10px;
+}
+
+.change-name-span {
+  font-size: 12px;
+  color: #BBB;
+}
