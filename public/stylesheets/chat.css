@@ -1,0 +1,23 @@
+* { margin: 0 auto; padding: 0; }
+
+#msg-input-form {
+  margin-top: 30px;
+}
+
+.msg-item {
+  margin-top: 20px;
+}
+
+.msg-item .user-name {
+  display: inline-block;
+  width: 60px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.msg-item .msg-content {
+  display: inline-block;
+  padding-left: 0.5em;
+  width: 200px;
+}
+
