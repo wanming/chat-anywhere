@@ -5,16 +5,33 @@
   <script>
   $(function () {
     $("form").submit(function () {
+
+      var userGuid = $.cookie('cap-user-guid');
+
+      if (!userGuid) {
+        $.cookie('cap-user-guid', genGuid(), { expires: 365 });
+      }
+
       var name = $("#inputName").val().trim();
+
       if ( name ) {
-        $.cookie('caw-user-name', name);
-        location.href = decodeURIComponent(location.href.split('?')[1])
+        $.cookie('cap-user-name', name, { expires: 365 });
+        location.href = '/chat/' + decodeURIComponent(location.href.split('?')[1])
       } else {
         alert('user name cannot be empty!');
       }
 
       return false;
     });
+
+    function genGuid () {
+      var len = 16
+      var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+      var results = []
+      while (len-- > -1)
+        results.push(chars[parseInt(Math.random() * 62)]);
+      return results.join('');
+    }
   });
   </script>
 </head>
@@ -36,5 +53,6 @@
       </div>
     </fieldset>
   </form>
+  <% include ../partial/ga.ejs %>
 </body>
 </html>

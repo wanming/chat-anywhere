@@ -8,56 +8,147 @@
 
     $.material.init(); 
 
-    var roomName = encodeURIComponent(location.href.split('?')[1]);
+    var splits = location.href.split('/')
+    var roomName = encodeURIComponent(splits[splits.length - 1]);
 
     console.log('chating at room', roomName);
 
     if ( !roomName ) { alert('wrong room name!'); return; }
 
-    var userName = $.cookie('caw-user-name');
+    var userName = $.cookie('cap-user-name');
+    var userGuid = $.cookie('cap-user-guid');
 
-    if (!userName) { login(); }
+    if (!userName || !userGuid) { login(); }
 
     var $input = $('#msg-input').focus();
     var $userNameSpan = $("#userNameSpan").text(userName);
     var $msgList = $('#msg-list');
+    var $loadMore = $("#load-more");
+    var $loadMoreBtn = $("#load-more>button");
+    var $body = $("body");
+    var $window = $(window);
+    var $document = $(document);
+
     var msgItemTpl = $("#msg-item-tpl").html();
 
     $("#changeNameBtn").click(login);
 
     var socket = io();
 
-    socket.emit('init', { room: roomName, userName: userName });
+    socket.emit('init', { room: roomName, userName: userName, userGuid: userGuid });
+
+    loadChatHistory().success(function (retList) {
+
+      if (retList.length === 0) { $loadMore.hide(); }
+
+      retList.forEach(function (item) {
+        appendMsg(item);
+      });
+
+      scrollToBottom();
+
+    });
+
+    $loadMoreBtn.click(function () {
+
+      if ($loadMoreBtn.text() === 'no more data') { return; }
+
+      var endId = $msgList.find('.msg-item:first').attr('data-id');
+
+      if ( !endId ) {
+        return;
+      }
+
+      loadChatHistory(endId).success(function (retList) {
+
+        if (retList.length === 0) {
+          $loadMoreBtn.text('no more data');
+
+          window.setTimeout(function () {
+            $loadMoreBtn.text('load more');
+          }, 2000);
+
+          return;
+        }
+
+        $loadMore.show();
+
+        retList.reverse().forEach(function (item) {
+          prependMsg(item);
+        });
+
+      });
+    });
 
     socket.on('chat-message', function (msg) {
 
-      appendNewMsg(msg);
+      var isViewingHistory = $window.scrollTop() + $window.height() < $(document).height();
 
-      $('body').scrollTop($(document).height());
+      appendMsg(msg);
+
+      if (!isViewingHistory) {
+        $body.scrollTop($(document).height());
+      }
 
       $input.focus();
     });
 
     $('#msg-input-form').submit(function(){
+
       var value = $input.val().trim();
-      if (!value) { return; }
+
+      if (!value) { return false; }
+
       socket.emit('chat-message', { msg: value });
+
       $input.val('');
+
       return false;
     });
 
-    function appendNewMsg (data) {
-      data.msg.dateFormated = moment(data.msg.date).fromNow();
-      $msgList.append(_.template(msgItemTpl, data));
+    function appendMsg (data) {
+
+      $msgList.append(_.template(msgItemTpl, formatData(data)));
+    }
+
+    function prependMsg (data) {
+
+      $msgList.prepend(_.template(msgItemTpl, formatData(data)));
+    }
+
+    function formatData (data) {
+
+      data.dateFormated = moment(data.createdAt).fromNow();
+      return data;
     }
 
     function login() {
 
-      location.href = 'login?' + roomName;
+      location.href = '/login?' + roomName;
+    }
+
+    function loadChatHistory (endId) {
+
+      var pageSize = 10;
+      var url = '/api/chat_history/' + roomName;
+      var query = { page_size: pageSize };
+
+      if (typeof endId !== 'undefined') {
+        query.end_id = endId
+      }
+
+      return $.get(url, query);
+    }
+
+    function scrollToBottom () {
+
+      $body.scrollTop($(document).height());
     }
 
     window.setInterval(function () {
+
       $msgList.find('.msg-date').each(function () {
+
         var date = +$(this).attr('data-date');
         $(this).text(moment(date).fromNow());
       });
@@ -68,7 +159,7 @@
 </head>
 <body class="container">
   <div class="page">
-
+    <div id="load-more"><button class="btn btn-primary btn-flat">load more</button></div>
     <div id="msg-list" class="row">
 
     </div>
@@ -83,12 +174,13 @@
   </div>
 
   <script type="text/template" id="msg-item-tpl">
-    <div class="col-md-8 msg-item">
-      <span class="user-name">{{ user.name }}</span>:
-      <span class="msg-content">{{ msg.content }}
+    <div class="col-md-8 msg-item" data-id="{{id}}" data-user-guid="{{userGuid}}">
+      <span class="user-name">{{ userName }}</span>:
+      <span class="msg-content">{{ content }}
       </span>
-      <div class="msg-date" data-date="{{ msg.date }}">{{ msg.dateFormated }}</div>
+      <div class="msg-date" data-date="{{ createdAt }}">{{ dateFormated }}</div>
     </div>
   </script>
+  <% include partial/ga.ejs %>
 </body>
 </html>
