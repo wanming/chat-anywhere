@@ -16,7 +16,7 @@
 
       if ( name ) {
         $.cookie('cap-user-name', name, { expires: 365 });
-        location.href = 'chat/' + decodeURIComponent(location.href.split('?')[1])
+        location.href = '<%= config.site.subDir %>chat/' + decodeURIComponent(location.href.split('?')[1])
       } else {
         alert('user name cannot be empty!');
       }
