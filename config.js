@@ -10,6 +10,7 @@ exports = module.exports = {
 
   site: {
     name: 'Chat_on_Any_Page',
-    subDir: '/'
+    subDir: '/',
+    port: 3000
   }
 }

@@ -9,14 +9,16 @@ d.on('error', console.log);
 
 d.run(function () {
   var debug = require('debug')('chat-anywhere');
-  var server = require('../server')
+  var config = require('../config');
+  var server = require('../server');
   var http = server.http;
   var app = server.app;
 
-  app.set('port', process.env.PORT || 3000);
+  var port = config.site.port || 3000;
 
-  http.listen(3000, function () {
+  app.set('port', port);
+
+  http.listen(port, function () {
     console.log('Express server listening on port ' + http.address().port);
   });
 });
-

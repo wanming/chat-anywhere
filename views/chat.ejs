@@ -9,6 +9,7 @@
     $.material.init(); 
 
     var baseUrl = location.origin + '<%= config.site.subDir %>';
+    var port = <%= config.site.port %>;
     var splits = location.href.split('/')
     var roomName = encodeURIComponent(splits[splits.length - 1]);
 
@@ -35,6 +36,10 @@
     $("#changeNameBtn").click(login);
 
     var socketUrl = 'http://' + location.host;
+
+    if (!location.port && port) {
+      socketUrl += ':' + port;
+    }
 
     var socket = io(socketUrl, {
       'transports': [ 'websocket' ],
