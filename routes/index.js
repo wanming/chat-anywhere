@@ -56,16 +56,16 @@ module.exports = function (app, io) {
 
   });
 
-  app.get('/chat/:room_name', function (req, res) {
+  app.all('/chat/*', function (req, res) {
 
-    var roomName = req.param('room_name')
+    var roomName = req.url.slice(5);
     
     res.ejs('chat', { title: roomName + ' - chat-anywhere' });
   });
 
-  app.get('/api/room_info', function (req, res) {
+  app.post('/api/room_info', function (req, res) {
 
-    var roomName = decodeURIComponent(req.param('room'));
+    var roomName = req.param('room');
     var room = io.sockets.adapter.rooms[roomName];
     var userCount = room ? Object.keys(room).length : 0;
 
@@ -74,9 +74,9 @@ module.exports = function (app, io) {
     });
   });
 
-  app.get('/api/chat_history/:room_name', function (req, res) {
+  app.post('/api/chat_history', function (req, res) {
 
-    var roomName = decodeURIComponent(req.param('room_name'));
+    var roomName = req.param('room_name');
     var pageSize = req.param('page_size');
     var endId = req.param('end_id');
 

@@ -10,8 +10,8 @@
 
     var baseUrl = location.origin + '<%= config.site.subDir %>';
     var port = <%= config.site.port %>;
-    var splits = location.href.split('/')
-    var roomName = encodeURIComponent(splits[splits.length - 1]);
+    var idx = location.href.indexOf('/chat/');
+    var roomName = location.href.slice(idx + 6);
 
     console.log('chating at room', roomName);
 
@@ -142,14 +142,14 @@
     function loadChatHistory (endId) {
 
       var pageSize = 10;
-      var url = baseUrl + 'api/chat_history/' + roomName;
-      var query = { page_size: pageSize };
+      var url = baseUrl + 'api/chat_history';
+      var query = { page_size: pageSize, room_name: roomName };
 
       if (typeof endId !== 'undefined') {
         query.end_id = endId
       }
 
-      return $.get(url, query);
+      return $.post(url, query);
     }
 
     function scrollToBottom () {
