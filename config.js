@@ -9,6 +9,7 @@ exports = module.exports = {
   },
 
   site: {
-    name: 'Chat_on_Any_Page'
+    name: 'Chat_on_Any_Page',
+    subDir: '/'
   }
 }

@@ -10,7 +10,7 @@ module.exports = function (app, io) {
       console.log(retList);
     });
 
-    res.render('index', { title: config.site.name });
+    res.ejs('index', { title: config.site.name });
   });
 
   /* chat */
@@ -60,7 +60,7 @@ module.exports = function (app, io) {
 
     var roomName = req.param('room_name')
     
-    res.render('chat', { title: roomName + ' - chat-anywhere' });
+    res.ejs('chat', { title: roomName + ' - chat-anywhere' });
   });
 
   app.get('/api/room_info', function (req, res) {
