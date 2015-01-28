@@ -8,6 +8,7 @@
 
     $.material.init(); 
 
+    var baseUrl = location.origin + '<%= config.site.subDir %>';
     var splits = location.href.split('/')
     var roomName = encodeURIComponent(splits[splits.length - 1]);
 
@@ -33,7 +34,7 @@
 
     $("#changeNameBtn").click(login);
 
-    var socket = io({
+    var socket = io(baseUrl, {
       'transports': [ 'websocket' ],
       'max reconnection attempts': 5,
       'sync disconnect on unload': false
@@ -128,13 +129,13 @@
 
     function login() {
 
-      location.href = '<%= config.site.subDir %>chat/login?' + roomName;
+      location.href = baseUrl + 'chat/login?' + roomName;
     }
 
     function loadChatHistory (endId) {
 
       var pageSize = 10;
-      var url = '/api/chat_history/' + roomName;
+      var url = baseUrl + 'api/chat_history/' + roomName;
       var query = { page_size: pageSize };
 
       if (typeof endId !== 'undefined') {
