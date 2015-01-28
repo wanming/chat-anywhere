@@ -33,7 +33,11 @@
 
     $("#changeNameBtn").click(login);
 
-    var socket = io();
+    var socket = io({
+      'transports': [ 'websocket' ],
+      'max reconnection attempts': 5,
+      'sync disconnect on unload': false
+    });
 
     socket.emit('init', { room: roomName, userName: userName, userGuid: userGuid });
 
