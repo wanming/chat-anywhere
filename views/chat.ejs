@@ -34,7 +34,9 @@
 
     $("#changeNameBtn").click(login);
 
-    var socket = io(baseUrl, {
+    var socketUrl = 'http://' + location.host;
+
+    var socket = io(socketUrl, {
       'transports': [ 'websocket' ],
       'max reconnection attempts': 5,
       'sync disconnect on unload': false
@@ -129,7 +131,7 @@
 
     function login() {
 
-      location.href = baseUrl + 'chat/login?' + roomName;
+      location.href = baseUrl + 'login?' + roomName;
     }
 
     function loadChatHistory (endId) {
