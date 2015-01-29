@@ -1,5 +1,6 @@
 var db = require('../lib').db;
 var config = require('../config');
+var _ = require('lodash');
 
 module.exports = function (app, io) {
 
@@ -88,6 +89,11 @@ module.exports = function (app, io) {
   });
 
   function storeChatHistory (ch) {
+
+    for ( var key in ch ) {
+
+      ch[key] = _.escape(ch[key]);
+    }
 
     return db.ChatHistory.create(ch).then(function (ret) {
       console.log('new ChatHistory added.');
