@@ -161,7 +161,7 @@
 
       $msgList.find('.msg-date').each(function () {
 
-        var date = +$(this).attr('data-date');
+        var date = $(this).attr('data-date');
         $(this).text(moment(date).fromNow());
       });
     }, 20000);
